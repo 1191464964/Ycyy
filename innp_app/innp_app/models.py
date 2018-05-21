@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import uuid
 from datetime import datetime
 from contextlib import contextmanager
 
@@ -51,6 +52,20 @@ class Base(_Base):
                 setattr(self, key, value)  # 给key赋值value （将value的值赋给key）
 
 
+class RevokedTokenModel(_Base):
+    __tablename__ = 'revoked_tokens'  # token信息存储
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(120))  # token 中的 jti信息
+
+    def __repr__(self):
+        return '<Revoked_tokens:{}>'.format(self.id)
+
+    @classmethod
+    def is_jti_blacklisted(cls, jti):
+        query = cls.query.filter_by(jti=jti).first()
+        return bool(query)
+
+
 class User(_Base):
     """
     用户表
@@ -66,6 +81,7 @@ class User(_Base):
     phone = db.Column(db.Integer, doc="电话号码")
     resume_url = db.String(db.String(255))
     _password = db.Column('password', db.String(256), nullable=False, doc="密码")
+    public_id = db.Column(db.String(60), default=uuid.uuid4(), doc="公开id")
     role = db.Column(db.SmallInteger, default=ROLE_USER)
     cmember = db.relationship('Cmember', uselist=False)  # 主键
 

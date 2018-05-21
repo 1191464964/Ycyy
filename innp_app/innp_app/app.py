@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 from flasgger import Swagger
 from .config import configs
 from .models import db
@@ -9,6 +10,7 @@ from .models import db
 def register_extensions(app):
     db.init_app(app)
     Migrate(app, db)
+    JWTManager(app)
 
 
 def register_blueprints(app):
