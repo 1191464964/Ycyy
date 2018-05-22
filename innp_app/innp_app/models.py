@@ -773,12 +773,12 @@ class PolicyRelease(_Base):
     政策发布
     """
     id = db.Column(db.Integer, primary_key=True, doc="自增id")
-    title = db.Column(db.String(50), unique=True, doc="文章标题")
-    number = db.Column(db.String(50), primary_key=True, unique=True, doc="文号")
+    title = db.Column(db.String(50), doc="文章标题")
+    number = db.Column(db.String(50), doc="文号")
     organization = db.Column(db.String(30), doc="发布机构")
     publisher = db.Column(db.String(30), doc="发布人")
-    releaseTime = db.Column(db.Date(), doc="发布时间")
-    modifyTime = db.Column(db.Date(), doc="修改时间")
+    releaseTime = db.Column(db.DateTime, doc="发布时间")
+    modifyTime = db.Column(db.DateTime, doc="修改时间")
     policyTheme = db.Column(db.String(30), doc="政策主题")
     animalKeyword = db.Column(db.String(30), doc="生态圈关键字")
     timerShaft = db.Column(db.String(30), doc="时间轴阶段")
@@ -795,7 +795,7 @@ class PolicyRelease(_Base):
         return '<PolicyRelease>:{}'.format(self.title)
 
 
-class ecosphere(_Base):
+class Ecosphere(_Base):
     """
     生态圈维护
     """
@@ -867,12 +867,12 @@ class IndustrialPark(_Base):
     """
     id = db.Column(db.Integer, primary_key=True, doc="产业园区id")
     industrialName = db.Column(db.String(30), doc="名称")
-    href = db.Column(db.String(70), doc="链接")
+    href = db.Column(db.String(255), doc="链接")
     sort = db.Column(db.Integer, doc="排序")
     top = db.Column(db.String(30), doc="置顶")
 
     def __repr__(self):
-        return '<PolicyClassify>:{}'.format(self.title)
+        return '<PolicyClassify>:{}'.format(self.industrialName)
 
 
 class BaseManage(_Base):
@@ -893,7 +893,7 @@ class BaseManage(_Base):
     top = db.Column(db.String(20), doc="置顶")
 
     def __repr__(self):
-        return '<BaseManage>:{}'.format(self.title)
+        return '<BaseManage>:{}'.format(self.baseName)
 
 
 class UserBrowsingMessage(_Base):
@@ -948,7 +948,24 @@ class PilotManagement(_Base):
     top = db.Column(db.String(20), doc="置顶")
 
     def __repr__(self):
-        return '<PilotManagement>:{}'.format(self.title)
+        return '<PilotManagement>:{}'.format(self.createTime)
+
+
+class Suggestions(_Base):
+    """
+    建言献策
+    """
+    id = db.Column(db.Integer, primary_key=True, doc="自增id")
+    name = db.Column(db.String(30), doc="姓名")
+    unit = db.Column(db.String(30), doc="单位")
+    pnumber = db.Column(db.String(30), doc="电话")
+    email = db.Column(db.String(20), doc="电子邮箱")
+    title = db.Column(db.String(30), doc="标题")
+    time = db.Column(db.DateTime, doc="时间")
+    status = db.Column(db.String(30), doc="状态")
+
+    def __repr__(self):
+        return '<Suggestions>:{}'.format(self.title)
 
 
 class PolicyStatistics(_Base):
@@ -959,7 +976,7 @@ class PolicyStatistics(_Base):
     title = db.Column(db.String(255), doc="政策标题")
     issuednumber = db.Column(db.String(255), doc="发文字号")
     company = db.Column(db.String(255), doc="颁布单位")
-    time = db.Column(db.String(255), doc="颁布时间")
+    time = db.Column(db.DateTime, doc="颁布时间")
     policyaccess = db.Column(db.String(255), doc="政策访问量")
 
     def __repr__(self):
@@ -977,11 +994,11 @@ class JournalSystem(_Base):
     result = db.Column(db.String(255), doc="结果")
     operator = db.Column(db.String(255), doc="操作人")
     ip = db.Column(db.String(255), doc="IP")
-    operationdate = db.Column(db.String(255), doc="操作日期")
+    operationdate = db.Column(db.DateTime, default=datetime.utcnow, doc="操作日期")
     creationtime = db.Column(db.DateTime, default=datetime.utcnow, doc="创建时间")
 
     def __repr__(self):
-        return '<JournalSystem:{}>'.format(self.title)
+        return '<JournalSystem:{}>'.format(self.modulename)
 
 
 class JournalPolicy(_Base):
@@ -1002,7 +1019,7 @@ class JournalPolicy(_Base):
     time = db.Column(db.DateTime, default=datetime.utcnow, doc="记录时间")
 
     def __repr__(self):
-        return '<JournalPolicy:{}>'.format(self.title)
+        return '<JournalPolicy:{}>'.format(self.visitorip)
 
 
 class AboutUs(_Base):
@@ -1011,12 +1028,12 @@ class AboutUs(_Base):
     """
     id = db.Column(db.Integer, primary_key=True, doc="自增ID")
     firsttitle = db.Column(db.String(255), doc="第一标题")
-    firstcontent = db.Column(db.String(255), doc="第一内容")
+    firstcontent = db.Column(db.Text, doc="第一内容")
     secondtitle = db.Column(db.String(255), doc="第二标题")
-    secondcontent = db.Column(db.String(255), doc="第二内容")
+    secondcontent = db.Column(db.Text, doc="第二内容")
 
     def __repr__(self):
-        return '<AboutUs:{}>'.format(self.title)
+        return '<AboutUs:{}>'.format(self.id)
 
 
 class MovePresentation(_Base):
@@ -1024,13 +1041,13 @@ class MovePresentation(_Base):
     移动端功能管理-报告管理
     """
     id = db.Column(db.Integer, primary_key=True, doc="自增ID")
-    title = db.Column(db.String(255), unique=True, doc="服务标题")
+    title = db.Column(db.String(255), doc="服务标题")
     description = db.Column(db.String(255), doc="简介")
     company = db.Column(db.String(255), doc="发布单位")
     publisher = db.Column(db.String(255), doc="发布人")
     publishtime = db.Column(db.DateTime, default=datetime.utcnow, doc="发布时间")
     creationtime = db.Column(db.DateTime, default=datetime.utcnow, doc="创建时间")
-    modifier = db.Column(db.DateTime, default=datetime.utcnow, doc="修改人")
+    modifier = db.Column(db.String(255), doc="修改人")
     mtime = db.Column(db.DateTime, default=datetime.utcnow, doc="修改时间")
     sort = db.Column(db.Integer, doc="排序")
     releaselogo = db.Column(db.String(255), doc="发布标识")
@@ -1038,17 +1055,23 @@ class MovePresentation(_Base):
     def __repr__(self):
         return '<MovePresentation:{}>'.format(self.title)
 
+    def set_attrs(self, attrs_dict):
+        for key, value in attrs_dict.items():
+            # hasattr(self,key) # 是否包含key
+            if hasattr(self, key) and key != 'id':
+                setattr(self, key, value)  # 给key赋值value （将value的值赋给key）
+
 
 class MoveService(_Base):
     """
     移动端功能管理-服务管理
     """
     id = db.Column(db.Integer, primary_key=True, doc="自增ID")
-    title = db.Column(db.String(255), unique=True, doc="服务标题")
+    title = db.Column(db.String(255), doc="服务标题")
     description = db.Column(db.String(255), doc="简介")
     founder = db.Column(db.String(255), doc="创建人")
     creationtime = db.Column(db.DateTime, default=datetime.utcnow, doc="创建时间")
-    modifier = db.Column(db.DateTime, default=datetime.utcnow, doc="修改人")
+    modifier = db.Column(db.String(255), doc="修改人")
     mtime = db.Column(db.DateTime, default=datetime.utcnow, doc="修改时间")
     sort = db.Column(db.Integer, doc="排序")
 
@@ -1061,11 +1084,11 @@ class MoveHomePage(_Base):
     移动端功能管理-活动首页管理
     """
     id = db.Column(db.Integer, primary_key=True, doc="自增ID")
-    title = db.Column(db.String(255), unique=True, doc="标题")
+    title = db.Column(db.String(255), doc="标题")
     description = db.Column(db.String(255), doc="简介")
     founder = db.Column(db.String(255), doc="创建人")
     creationtime = db.Column(db.DateTime, default=datetime.utcnow, doc="创建时间")
-    modifier = db.Column(db.DateTime, default=datetime.utcnow, doc="修改人")
+    modifier = db.Column(db.String(255), doc="修改人")
     mtime = db.Column(db.DateTime, default=datetime.utcnow, doc="修改时间")
     sort = db.Column(db.Integer, doc="排序")
 
@@ -1078,17 +1101,17 @@ class MoveVersion(_Base):
     移动端功能管理-版本管理
     """
     id = db.Column(db.Integer, primary_key=True, doc="自增ID")
-    number = db.Column(db.String(255), unique=True, doc="版本号")
-    information = db.Column(db.String(255), unique=True, doc="版本信息")
-    classification = db.Column(db.String(255), unique=True, doc="分类")
-    compulsoryrenewal = db.Column(db.String(255), unique=True, doc="强制更新")
+    number = db.Column(db.String(255), doc="版本号")
+    information = db.Column(db.String(255), doc="版本信息")
+    classification = db.Column(db.String(255), doc="分类")
+    compulsoryrenewal = db.Column(db.String(255), doc="强制更新")
     founder = db.Column(db.String(255), doc="创建人")
     creationtime = db.Column(db.DateTime, default=datetime.utcnow, doc="创建时间")
-    modifier = db.Column(db.DateTime, default=datetime.utcnow, doc="修改人")
+    modifier = db.Column(db.String(255), doc="修改人")
     mtime = db.Column(db.DateTime, default=datetime.utcnow, doc="修改时间")
 
     def __repr__(self):
-        return '<MoveVersion:{}>'.format(self.title)
+        return '<MoveVersion:{}>'.format(self.id)
 
 
 class MoveUser(_Base):
@@ -1097,8 +1120,8 @@ class MoveUser(_Base):
     """
     id = db.Column(db.Integer, primary_key=True, doc="自增ID")
     phone = db.Column(db.Integer, doc="手机号")
-    user = db.Column(db.String(255), unique=True, doc="用户名")
-    model = db.Column(db.String(255), unique=True, doc="机型")
+    user = db.Column(db.String(255), doc="用户名")
+    model = db.Column(db.String(255), doc="机型")
     time = db.Column(db.DateTime, default=datetime.utcnow, doc="注册时间")
     logintime = db.Column(db.DateTime, default=datetime.utcnow, doc="最近登录时间")
 
